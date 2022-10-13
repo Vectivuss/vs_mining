@@ -199,7 +199,7 @@ function VectivusMining:NpcMenu( p )
             s.Craftable = self:getItem( selectedCraftable )
             local t = s.Craftable
             local text = ( ( t and "[ " .. t.name .. " ]" ) or "" )
-            draw.DrawText( text, "vs.mining.ui.35", w/2, h*.03, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
+            draw.DrawText( text, "vs.mining.ui.22", w/2, h*.03, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
         end
         DModelPanel.PaintOver = function( s, w, h )
             if !DPanel.Craftable then return end
@@ -299,9 +299,13 @@ function VectivusMining:NpcMenu( p )
             timer.Create( "vs_mining.populate", .5, 1, populate )
         end
 
+        local craftables
         local DPanel = self:DPanel( DPanel )
         DPanel:Dock( BOTTOM )
         DPanel:SetTall( H*.815 )
+        DPanel.Think = function()
+            craftables = table.Count( self.craftables )
+        end
 
         local DScrollPanel = self:DScrollPanel( DPanel )
         DScrollPanel:Dock( FILL )
@@ -312,8 +316,7 @@ function VectivusMining:NpcMenu( p )
             DScrollPanel:Clear()
 
             local rows = {}
-            local craftables = table.Count( self.craftables )
-            for i=1, math.ceil( craftables / 5 ) do 
+            for i=1, math.ceil( craftables / 8 ) do 
                 local DPanel = vgui.Create( "DPanel", DScrollPanel )
                 rows[i] = DPanel
                 DPanel:Dock( TOP )
@@ -324,11 +327,12 @@ function VectivusMining:NpcMenu( p )
 
             local i = 0
             for k, t in SortedPairsByMemberValue( self.craftables, "name", false ) do
+                i = i + 1
+
                 if ( !string.find( string.lower( t.name ), string.lower( filter ) ) ) then continue end
 
-                i = i + 1
                 if !IsValid( DScrollPanel ) then return end
-                local row = rows[ math.ceil( i / 5 ) ]
+                local row = rows[ math.ceil( i / 8 ) ]
                 if !IsValid( row ) then break end
 
                 local item = ( ( self:IsWeapon( k ) and weapons.Get( k ) ) or ( self:IsEntity( k ) and scripted_ents.Get( k ) ) or {} )
