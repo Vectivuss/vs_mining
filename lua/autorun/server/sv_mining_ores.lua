@@ -10,7 +10,26 @@ function VectivusMining:MineOre( p, ore, amount )
 
     local vars = self:getOreVars( p, ore )
     local totalOre = ( vars[ ore ] or 0 )
+    local capacity = VectivusMining:getOre( ore ).capacity or 0
+
+    if totalOre >= capacity then
+        if DarkRP then
+            DarkRP.notify( p, 1, 2, "[MINING] You've reached max capacity for " .. ore .. "!" )
+        else
+            self:AddText( p, "You've reached max capacity for " .. ore .. "!" )
+        end
+        return 
+    end
+
     totalOre = ( totalOre + amount ) 
+    do // check if the player has reached capacity
+        if totalOre > capacity then
+            local overCapacity = ( totalOre - capacity )
+            amount = amount - overCapacity
+            VectivusMining:MineOre( p, ore, amount )
+            return
+        end
+    end
 
     self:SetPlayerOre( sid, ore, totalOre )
     self:AddPlayerXP( sid, amount )
