@@ -21,10 +21,13 @@ function VectivusMining:MineOre( p, ore, amount )
         return 
     end
 
+
     do // check if the player has reached capacity
         if totalOre + amount > capacity then
             local overCapacity = ( totalOre + amount ) - capacity
             amount = amount - overCapacity
+            totalOre = ( totalOre + amount )
+        else
             totalOre = ( totalOre + amount )
         end
     end
